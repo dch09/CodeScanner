@@ -501,6 +501,10 @@ extension CodeScannerView {
 
         func found(_ result: ScanResult) {
             lastTime = Date()
+            
+            if parentView.scanMode == .once {
+                captureSession?.stopRunning()
+            }
 
             if parentView.shouldVibrateOnSuccess {
                 AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
