@@ -502,9 +502,11 @@ extension CodeScannerView {
         func found(_ result: ScanResult) {
             lastTime = Date()
             
+            #if !targetEnvironment(simulator)
             if parentView.scanMode == .once {
                 captureSession?.stopRunning()
             }
+            #endif
 
             if parentView.shouldVibrateOnSuccess {
                 AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
