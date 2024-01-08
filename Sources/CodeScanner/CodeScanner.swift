@@ -9,6 +9,10 @@
 import AVFoundation
 import SwiftUI
 
+public protocol CodeScannerHandler: AnyObject {
+    var stateHandler: ScannerStateDelegate? { get set }
+}
+
 /// An enum describing the ways CodeScannerView can hit scanning problems.
 public enum ScanError: Error {
     /// The camera could not be accessed.
@@ -75,6 +79,7 @@ public struct CodeScannerView: UIViewControllerRepresentable {
     public var isGalleryPresented: Binding<Bool>
     public var videoCaptureDevice: AVCaptureDevice?
     public var completion: (Result<ScanResult, ScanError>) -> Void
+    public var manager: CodeScannerHandler?
 
     public init(
         codeTypes: [AVMetadataObject.ObjectType],
@@ -87,6 +92,7 @@ public struct CodeScannerView: UIViewControllerRepresentable {
         isTorchOn: Bool = false,
         isGalleryPresented: Binding<Bool> = .constant(false),
         videoCaptureDevice: AVCaptureDevice? = AVCaptureDevice.bestForVideo,
+        manager: CodeScannerHandler? = nil,
         completion: @escaping (Result<ScanResult, ScanError>) -> Void
     ) {
         self.codeTypes = codeTypes
@@ -99,11 +105,16 @@ public struct CodeScannerView: UIViewControllerRepresentable {
         self.isTorchOn = isTorchOn
         self.isGalleryPresented = isGalleryPresented
         self.videoCaptureDevice = videoCaptureDevice
+        self.manager = manager
         self.completion = completion
     }
 
     public func makeUIViewController(context: Context) -> ScannerViewController {
-        return ScannerViewController(showViewfinder: showViewfinder, parentView: self)
+        return ScannerViewController(
+            showViewfinder: showViewfinder,
+            manager: manager,
+            parentView: self
+        )
     }
 
     public func updateUIViewController(_ uiViewController: ScannerViewController, context: Context) {
