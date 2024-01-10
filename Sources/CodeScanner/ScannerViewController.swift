@@ -9,7 +9,6 @@
 import AVFoundation
 import UIKit
 
-
 public protocol ScannerStateDelegate: AnyObject {
     func start()
 }
@@ -26,9 +25,9 @@ public extension CodeScannerView {
         var didFinishScanning = false
         var lastTime = Date(timeIntervalSince1970: 0)
         private let showViewfinder: Bool
-        
+
         let fallbackVideoCaptureDevice = AVCaptureDevice.default(for: .video)
-        
+
         private var isGalleryShowing: Bool = false {
             didSet {
                 // Update binding
@@ -54,7 +53,7 @@ public extension CodeScannerView {
             self.showViewfinder = false
             super.init(coder: coder)
         }
-        
+
         func openGallery() {
             isGalleryShowing = true
             let imagePicker = UIImagePickerController()
@@ -571,9 +570,10 @@ extension CodeScannerView.ScannerViewController: ScannerStateDelegate {
             self.reset()
         }
         DispatchQueue.global().async {
-            self.captureSession?.startRunning()
+            #if !targetEnvironment(simulator)
+                self.captureSession?.startRunning()
+            #endif
         }
-        
     }
 }
 
