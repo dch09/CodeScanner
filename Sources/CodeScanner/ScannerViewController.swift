@@ -20,7 +20,7 @@ public extension CodeScannerView {
         private var isCapturing = false
         private var handler: ((UIImage) -> Void)?
         var parentView: CodeScannerView!
-        var manager: CodeScannerHandler?
+        weak var manager: CodeScannerHandler?
         var codesFound = Set<String>()
         var didFinishScanning = false
         var lastTime = Date(timeIntervalSince1970: 0)
@@ -345,12 +345,7 @@ public extension CodeScannerView {
             override public func viewDidDisappear(_ animated: Bool) {
                 super.viewDidDisappear(animated)
 
-                if captureSession?.isRunning == true {
-                    DispatchQueue.global(qos: .userInteractive).async {
-                        self.captureSession?.stopRunning()
-                    }
-                }
-
+                captureSession = nil
                 NotificationCenter.default.removeObserver(self)
             }
 
