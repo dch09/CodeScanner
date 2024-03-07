@@ -10,7 +10,7 @@ import AVFoundation
 import SwiftUI
 
 public protocol CodeScannerHandler: AnyObject {
-    var stateHandler: ScannerStateDelegate? { get set }
+    var scannerCameraHandler: ScannerStateDelegate? { get set }
 }
 
 /// An enum describing the ways CodeScannerView can hit scanning problems.

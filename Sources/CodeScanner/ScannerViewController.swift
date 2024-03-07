@@ -11,6 +11,7 @@ import UIKit
 
 public protocol ScannerStateDelegate: AnyObject {
     func start()
+    func stop()
 }
 
 @available(macCatalyst 14.0, *)
@@ -46,7 +47,7 @@ public extension CodeScannerView {
             self.manager = manager
             self.showViewfinder = showViewfinder
             super.init(nibName: nil, bundle: nil)
-            manager?.stateHandler = self
+            manager?.scannerCameraHandler = self
         }
 
         required init?(coder: NSCoder) {
@@ -560,6 +561,14 @@ extension CodeScannerView.ScannerViewController: AVCapturePhotoCaptureDelegate {
 }
 
 extension CodeScannerView.ScannerViewController: ScannerStateDelegate {
+    public func stop() {
+        DispatchQueue.global().async {
+            #if !targetEnvironment(simulator)
+                self.captureSession?.stopRunning()
+            #endif
+        }
+    }
+    
     public func start() {
         DispatchQueue.main.async {
             self.reset()
